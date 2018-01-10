@@ -1,25 +1,37 @@
-function Node (def = 7) {
+var __NONE__ = "__NONE__";
 
-    this._privatem = 1;
-    this.publicm = def;
+function Node (def) {
 
+    var __def = {
+        Location: [0, 0, 0], 
+        Name: __NONE__, 
+        Tag: __NONE__
+    };
 
-    if (!Node.prototype.getName) {
-        Node.prototype.getName = function() {
-            return this.publicm;
+    this.Location = [def&&def.Location&&def.Location[0] || __def.Location[0], def&&def.Location&&def.Location[1] || __def.Location[1], def&&def.Location&&def.Location[2] || __def.Location[2]];
+    this.Name = def&&def.Name || __def.Name;
+    this.Tag = def&&def.Tag || __def.Tag;
+
+    if (!Node.prototype.setLocation) {
+        Node.prototype.setLocation = function(x, y, z) {
+            this.Location = [x, y, z];
+            return this;
         };
     }
 }
 
-var n1 = new Node(1);
-//n1.publicm = 11;
-console.dir(n1.getName());
+function Arc (def) {
 
-var n2 = new Node(2);
-//n2.publicm = 22;
-console.dir(n2.getName());
+    var __def = {
+        Weight: 0
+    };
+    this.Weight = def&&def.Weight||__def.Weight;
+}
 
-debugger;
+var n1 = new Node({Location: [10, 10, 0]});
+var a1 = new Arc({Weight:10});
+
+debugger
 
 //parece que funciona...
 

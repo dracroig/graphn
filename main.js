@@ -20,3 +20,5 @@ var n2 = new Node(2);
 console.dir(n2.getName());
 
 debugger;
+
+//parece que funciona...

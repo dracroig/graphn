@@ -91,7 +91,7 @@ function Node (def) {
 function Arc (from, to, def) {
 
     var __def = {
-        Weight: 0
+        Weight: 1
     };
 
     this.From = from;
@@ -114,6 +114,7 @@ function Graph (def) {
     this.Nodes = def&&def.Nodes||__def.Nodes;
     this.Arcs = def&&def.Arcs||__def.Arcs;
     this.MatrixAdj = null;
+    this.MatrixAdjWeight = null;
 
     if (!Graph.prototype.addNode) {
 
@@ -153,19 +154,23 @@ function Graph (def) {
 
             var n = this.Nodes.length;
             this.MatrixAdj = ModuleUtilities.createArray(n,n);
+            this.MatrixAdjWeight = ModuleUtilities.createArray(n,n);            
 
             for (var i = 0; i < this.Arcs.length; i++) {
                 
                 var from = this.Arcs[i].From;
                 var to = this.Arcs[i].To;
+                var w = this.Arcs[i].Weight;
 
                 if (from < n && to < n) {
 
                     this.MatrixAdj[from][to] = 1;
+                    this.MatrixAdjWeight[from][to] = w;                    
 
                     if (!this.Directed && from != to) {
 
                         this.MatrixAdj[to][from] = 1;
+                        this.MatrixAdjWeight[to][from] = w;
                     }
                 }
             }
@@ -181,15 +186,15 @@ var n1 = new Node({Location: [10, 10, 0]});
 var a1 = new Arc(0,1,{Weight:10});
 
 var g = new Graph ({
-    Directed: false,
+    Directed: true,
     Nodes: [new Node(), new Node(), new Node(), new Node(), new Node()],
-    Arcs: [new Arc(0, 1), new Arc(1, 4), new Arc(0, 3), new Arc(3, 2), new Arc(2, 1), new Arc(2, 4)]
+    Arcs: [new Arc(0, 1, {Weight: 4}), new Arc(1, 4, {Weight: 6}), new Arc(0, 3, {Weight: 8}), new Arc(3, 2, {Weight: 4}), new Arc(2, 1, {Weight: 6}), new Arc(2, 4, {Weight: 2})]
 });
 g.addNode(new Node());
-g.addArc(new Arc(4, 5));
-g.addArc(new Arc(0, 0));
+g.addArc(new Arc(4, 5, {Weight: 13}));
 
 
 console.log(ModuleUtilities.print2dMatrix(g.MatrixAdj));
+console.log(ModuleUtilities.print2dMatrix(g.MatrixAdjWeight));
 
 debugger

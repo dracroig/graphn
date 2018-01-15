@@ -1,4 +1,20 @@
-var __NONE__ = "__NONE__";
+var fs = require('fs');
+
+const  __NONE__ = "__NONE__";
+
+const U = 1;
+const R = 2;
+const D = 4;
+const L = 8;
+
+//Clear console screen
+clear = function(clear) {
+    //if (clear !== false) {
+    //  process.stdout.write('\033[2J');
+    //}
+    fs.writeSync(1, '\033[2J');
+    fs.fsyncSync(1);
+};
 
 var ModuleUtilities = (function () {
     
@@ -197,4 +213,34 @@ g.addArc(new Arc(4, 5, {Weight: 13}));
 console.log(ModuleUtilities.print2dMatrix(g.MatrixAdj));
 console.log(ModuleUtilities.print2dMatrix(g.MatrixAdjWeight));
 
-debugger
+var sampleMap = [
+    [2, 2, 6, 2, 6, 2, 4 ],
+    [1, 0, 1, 0, 1, 0, 4 ],
+    [1, 8, 9, 8, 9, 8, 8 ]];
+
+
+
+clear();
+
+function sleep(milliseconds) {
+    var start = new Date().getTime();
+    for (var i = 0; i < 1e7; i++) {
+      if ((new Date().getTime() - start) > milliseconds){
+        break;
+      }
+    }
+  }
+
+for(var i = 1; i < 20; i++)
+{
+    clear();
+    for (var j = 0; j < i; j++)
+    {
+        console.log(' ');
+    }
+    console.log(i+'*');
+    sleep(1000);
+}
+
+
+//console.log(ModuleUtilities.print2dMatrix(sampleMap));

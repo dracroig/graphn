@@ -2,19 +2,18 @@ var fs = require('fs');
 
 const  __NONE__ = "__NONE__";
 
-const U = 1;
-const R = 2;
-const D = 4;
-const L = 8;
+//Direction
+const N = 1;    //North
+const E = 2;    //East
+const S = 4;    //South
+const W = 8;    //West
+const DIRECTIONS = [N, E, S, W];
 
-//Clear console screen
-clear = function(clear) {
-    //if (clear !== false) {
-    //  process.stdout.write('\033[2J');
-    //}
-    fs.writeSync(1, '\033[2J');
-    fs.fsyncSync(1);
-};
+//Movement
+const F = 1;    //go Forward
+const R = 2;    //turn Right
+const B = 3;    //go Backwards
+const L = 4;    //turn Left 
 
 var ModuleUtilities = (function () {
     
@@ -43,7 +42,9 @@ var ModuleUtilities = (function () {
 
                 for (var j = 0; j < m[i].length; j++) {
 
-                    var l = m[i][j].toString().length;
+                    var l = 0;
+                    
+                    if (m[i][j] !== undefined) l = m[i][j].toString().length;
 
                     if (l > maxl) {
 
@@ -69,8 +70,36 @@ var ModuleUtilities = (function () {
 
             return ret;
         },
+        printMap: function (m, b) {
+
+            var ret = "";
+
+            for (var i = 0; i < m.length; i++) {
+
+                var row = "";
+
+                for (var j = 0; j < m[i].length; j++) {
+
+                    var c = " "
+                    if (b && b.x == j && b.y == i)  c = "@";
+
+                    if (m[i][j] == 0) row += "██";
+                    else if (m[i][j] == N) row += "↑" + c;
+                    else if (m[i][j] == E) row += "→" + c;
+                    else if (m[i][j] == S) row += "↓" + c;
+                    else if (m[i][j] == W) row += "←" + c;
+                    else if (m[i][j] == W+E) row += "↔" + c;
+                    else if (m[i][j] == N+S) row += "↕" + c;
+                    else row += " " + c;
+                }
+                ret += row + "\n";
+            }
+
+            return ret;
+        },
         charFill: function ( number, width, char ) {
 
+            if (number === undefined) number = "?";
             width -= number.toString().length;
             if ( width > 0 ) {
 
@@ -214,23 +243,52 @@ console.log(ModuleUtilities.print2dMatrix(g.MatrixAdj));
 console.log(ModuleUtilities.print2dMatrix(g.MatrixAdjWeight));
 
 var sampleMap = [
-    [2, 2, 6, 2, 6, 2, 4 ],
-    [1, 0, 1, 0, 1, 0, 4 ],
-    [1, 8, 9, 8, 9, 8, 8 ]];
+    [0, 0, 0, 0, 0, 0, 0 ,0 ,0 ],
+    [0, 2, 2, 6, 2, 6, 2, 4, 0 ],
+    [0, 1, 0, 1, 0, 1, 0, 4, 0 ],
+    [0, 1, 8, 9, 8, 9, 8, 8, 0 ],
+    [0, 0, 0, 0, 0, 0, 0 ,0 ,0 ]];
 
+var sampleMap2 = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0 ],
+    [0,  , 2,  , 2,  , 2,  , 0 ],
+    [0, 1, 0, 1, 0, 1, 0, 4, 0 ],
+    [0,  , 8,  , 8,  , 8,  , 0 ],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0 ]];
 
+var sampleMap3 = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0,  , 2,  , 2,  , 8,  , 2,  , 2,  , 0],
+    [0, 1, 0, 4, 0, 4, 0, 1, 0, 4, 0, 4, 0],
+    [0,  , 8,  ,10,  , 0,  , 8,  , 8,  , 0],
+    [0, 1, 0, 4, 0, 4, 0, 1, 0, 5, 0, 4, 0],
+    [0,  , 2,  , 2,  , 2,  , 2,  , 2,  , 0],
+    [0, 1, 0, 4, 0, 1, 0, 4, 0, 0, 0, 4, 0],
+    [0,  , 8,  , 8,  , 8,  , 8,  , 8,  , 0],
+    [0, 1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, 0],
+    [0,  , 2,  , 2,  , 2,  , 0,  ,10,  , 0],
+    [0, 1, 0, 4, 0, 1, 0, 4, 0, 5, 0, 4, 0],
+    [0,  , 8,  , 8,  , 8,  , 8,  , 8,  , 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+//Clear console screen
+var clear = function() {
+    fs.writeSync(1, '\033[2J');
+    fs.fsyncSync(1);
+}
 
 clear();
+
+
 
 function sleep(milliseconds) {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
-      }
+        if ((new Date().getTime() - start) > milliseconds) break;
     }
-  }
+}
 
+/*
 for(var i = 1; i < 20; i++)
 {
     clear();
@@ -240,7 +298,87 @@ for(var i = 1; i < 20; i++)
     }
     console.log(i+'*');
     sleep(1000);
-}
+}*/
 
 
 //console.log(ModuleUtilities.print2dMatrix(sampleMap));
+//console.log("");
+
+var b1 = {x: 1, y: 1, dir: E };
+
+function step (a, b) {
+    
+    var i = (b - 1 + (a==E) + 2*(a==S) + 3*(a==W)) % 4;
+    return DIRECTIONS[i];
+}
+
+function getCell (b, testMov)
+{
+    var c = step(b.dir, testMov);
+    switch (c) {
+        case N: return {x: b.x, y: b.y-1, dir: N};
+        case E: return {x: b.x+1, y: b.y, dir: E};
+        case S: return {x: b.x, y: b.y+1, dir: S};
+        case W: return {x: b.x-1, y: b.y, dir: W};
+    }
+}
+
+console.log(ModuleUtilities.print2dMatrix(sampleMap3, b1));
+
+function deduceIntersections (m) {
+
+    for (var i = 0; i < m.length; i++) {
+
+        var row = "";
+
+        for (var j = 0; j < m[i].length; j++) {
+
+            if (m[i][j] === undefined )
+            {
+                m[i][j] = m[i-1][j]&N | m[i][j+1]&E | m[i+1][j]&S | m[i][j-1]&W;
+            }            
+        }
+    }
+}
+
+deduceIntersections (sampleMap3);
+
+console.log(ModuleUtilities.print2dMatrix(sampleMap3, b1));
+
+while (true)
+{
+    clear ();
+
+    console.log(ModuleUtilities.printMap(sampleMap3, b1));
+
+    sleep(1000);
+
+    var v = getCell (b1, F);
+    var n = sampleMap3[v.y][v.x];
+    if (n == 0)
+    {
+        v = getCell (b1, R);
+        n = sampleMap3[v.y][v.x];
+        if (n == 0)
+        {
+            v = getCell (b1, L);
+            n = sampleMap3[v.y][v.x];
+            if (n == 0)
+            {
+                v = getCell (b1, B);
+                n = sampleMap3[v.y][v.x];
+                if (n == 0)
+                {
+                    v.x = b1.x;
+                    v.y = b1.y;
+                    v.dir = b1.dir;
+                }
+            }
+        }
+    }
+    b1.x = v.x;
+    b1.y = v.y;
+    b1.dir = v.dir;
+}
+
+//https://www.key-shortcut.com/en/writing-systems/35-symbols/arrows/
